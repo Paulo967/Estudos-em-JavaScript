@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Hóspedes</title>
+</head>
+<body>
+<script>
+"use strict";
+
+const hospedes = [];
+
+function lerNumero(mensagem) {
+    const resposta = prompt(mensagem);
+
+    if (resposta === null || resposta.trim() === "") {
+        return null;
+    }
+
+    const numero = Number(resposta.replace(",", "."));
+    return Number.isFinite(numero) ? numero : NaN;
+}
+
+function lerTexto(mensagem) {
+    const resposta = prompt(mensagem);
+    return resposta === null ? null : resposta.trim();
+}
+
+function listarOrdenado() {
+    return [...hospedes].sort((a, b) =>
+        a.nome.localeCompare(b.nome, "pt-BR")
+    );
+}
+
+function cadastrar() {
+    if (hospedes.length >= 15) {
+        alert("Máximo de cadastros atingido");
+        return;
+    }
+
+    const nome = lerTexto("Nome do hóspede:");
+
+    if (!nome) return;
+
+    const duplicado = hospedes.some(h =>
+        h.nome.toLowerCase() === nome.toLowerCase()
+    );
+
+    if (duplicado) {
+        alert("Hóspede já cadastrado");
+        return;
+    }
+
+    hospedes.push({
+        nome: nome,
+        data: new Date()
+    });
+
+    alert("Hóspede cadastrado com sucesso.");
+}
+
+function pesquisarExato() {
+    const nome = lerTexto("Informe o nome do hóspede:");
+
+    if (!nome) return;
+
+    const encontrado = hospedes.find(h =>
+        h.nome.toLowerCase() === nome.toLowerCase()
+    );
+
+    if (encontrado) {
+        alert("Hóspede " + encontrado.nome + " foi encontrado.");
+    } else {
+        alert("Hóspede não encontrado");
+    }
+}
+
+function pesquisarPrefixo() {
+    const prefixo = lerTexto("Informe o prefixo:");
+
+    if (!prefixo) return;
+
+    const resultados = listarOrdenado().filter(h =>
+        h.nome.toLowerCase().startsWith(prefixo.toLowerCase())
+    );
+
+    if (resultados.length === 0) {
+        alert("Hóspede não encontrado");
+        return;
+    }
+
+    let mensagem = "RESULTADOS\n\n";
+
+    resultados.forEach((h, indice) => {
+        mensagem += "[" + (indice + 1) + "] " +
+            h.nome + "\n";
+    });
+
+    alert(mensagem);
+}
+
+function listar() {
+    const lista = listarOrdenado();
+
+    if (lista.length === 0) {
+        alert("Nenhum hóspede cadastrado.");
+        return;
+    }
+
+    let mensagem = "HÓSPEDES CADASTRADOS\n\n";
+
+    lista.forEach((h, indice) => {
+        mensagem += "[" + (indice + 1) + "] " +
+            h.nome + " - " +
+            h.data.toLocaleString("pt-BR") + "\n";
+    });
+
+    alert(mensagem);
+}
+
+function atualizar() {
+    const lista = listarOrdenado();
+
+    if (lista.length === 0) {
+        alert("Nenhum hóspede cadastrado.");
+        return;
+    }
+
+    let mensagem = "Escolha o índice para atualizar:\n\n";
+
+    lista.forEach((h, indice) => {
+        mensagem += "[" + (indice + 1) + "] " +
+            h.nome + "\n";
+    });
+
+    const indice = lerNumero(mensagem);
+
+    if (indice === null) return;
+
+    if (!Number.isInteger(indice) ||
+        indice < 1 || indice > lista.length) {
+        alert("Índice inválido.");
+        return;
+    }
+
+    const hospede = lista[indice - 1];
+    const novoNome = lerTexto("Informe o novo nome:");
+
+    if (!novoNome) return;
+
+    const duplicado = hospedes.some(h =>
+        h !== hospede &&
+        h.nome.toLowerCase() === novoNome.toLowerCase()
+    );
+
+    if (duplicado) {
+        alert("Hóspede já cadastrado");
+        return;
+    }
+
+    hospede.nome = novoNome;
+
+    alert("Operação realizada com sucesso");
+}
+
+function remover() {
+    const lista = listarOrdenado();
+
+    if (lista.length === 0) {
+        alert("Nenhum hóspede cadastrado.");
+        return;
+    }
+
+    let mensagem = "Escolha o índice para remover:\n\n";
+
+    lista.forEach((h, indice) => {
+        mensagem += "[" + (indice + 1) + "] " +
+            h.nome + "\n";
+    });
+
+    const indice = lerNumero(mensagem);
+
+    if (indice === null) return;
+
+    if (!Number.isInteger(indice) ||
+        indice < 1 || indice > lista.length) {
+        alert("Índice inválido.");
+        return;
+    }
+
+    const hospede = lista[indice - 1];
+    const posicao = hospedes.indexOf(hospede);
+
+    hospedes.splice(posicao, 1);
+
+    alert("Operação realizada com sucesso");
+}
+
+function menu() {
+    let opcao;
+
+    do {
+        opcao = lerNumero(
+            "CADASTRO DE HÓSPEDES" +
+            "\n\n1 - Cadastrar" +
+            "\n2 - Pesquisar por nome exato" +
+            "\n3 - Pesquisar por prefixo" +
+            "\n4 - Listar ordenado (A-Z)" +
+            "\n5 - Atualizar cadastro" +
+            "\n6 - Remover cadastro" +
+            "\n7 - Sair"
+        );
+
+        switch (opcao) {
+            case 1:
+                cadastrar();
+                break;
+            case 2:
+                pesquisarExato();
+                break;
+            case 3:
+                pesquisarPrefixo();
+                break;
+            case 4:
+                listar();
+                break;
+            case 5:
+                atualizar();
+                break;
+            case 6:
+                remover();
+                break;
+            case 7:
+                alert("Saindo do cadastro de hóspedes.");
+                break;
+            default:
+                alert("Opção inválida. Tente novamente.");
+        }
+    } while (opcao !== 7);
+}
+
+menu();
+</script>
+</body>
+</html>
