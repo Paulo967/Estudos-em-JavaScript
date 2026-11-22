@@ -1,0 +1,82 @@
+:root{--tinta:#070b08;--osso:#e8e6d4;--musgo:#9be31d;--seda:#c43d3d;--fonte:'Cinzel','Trajan Pro',Georgia,serif;--texto:Lora,Georgia,serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--tinta);color:var(--osso);font-family:var(--fonte);touch-action:manipulation}
+button,input{font:inherit;color:inherit}
+
+/* Cena: mantém a proporção 1919x1080 da foto (modo "cover"), assim o furão fica sempre no banco */
+#cena{position:absolute;left:50%;top:50%;translate:-50% -50%;aspect-ratio:1919/1080;width:max(100vw,calc(100vh*1919/1080));width:max(100vw,calc(100dvh*1919/1080))}
+#plano{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* Furão */
+#furao{position:absolute;left:51.2%;bottom:32.7%;width:13%;translate:-50% 0;cursor:pointer;filter:drop-shadow(0 0 16px rgba(170,235,70,.2))}
+#furao svg{display:block;width:100%;overflow:visible;transform-origin:50% 100%;animation:resp 3.6s ease-in-out infinite}
+@keyframes resp{50%{transform:scale(1.012,1.03)}}
+.olhos{transform-box:fill-box;transform-origin:50% 50%;animation:pisca 5.5s infinite}
+@keyframes pisca{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.08)}}
+.b-triste,.b-aberta{display:none}
+.zzz{opacity:0}
+#furao[data-e=triste] .b-feliz,#furao[data-e=faminto] .b-feliz,#furao[data-e=cansado] .b-feliz{display:none}
+#furao[data-e=triste] .b-triste,#furao[data-e=faminto] .b-triste,#furao[data-e=cansado] .b-triste{display:block}
+#furao[data-e=cansado] .olhos{animation:none;transform:scaleY(.42)}
+#furao.comendo .b-feliz,#furao.comendo .b-triste{display:none}
+#furao.comendo .b-aberta{display:block}
+#furao.comendo svg{animation:mastiga .35s ease-in-out 5}
+@keyframes mastiga{50%{transform:scale(1.025,.97) rotate(-1.5deg)}}
+#furao.brincando{animation:salta .55s ease-in-out 3}
+#furao.pulinho{animation:salta .45s ease-out 1}
+@keyframes salta{40%{transform:translateY(-58px) rotate(-3deg)}70%{transform:translateY(0) scale(1.03,.97)}}
+#furao.dormindo .olhos{animation:none;transform:scaleY(.06)}
+#furao.dormindo .b-feliz{display:none}
+#furao.dormindo .b-triste{display:block}
+#furao.dormindo svg{animation:dorme 2.6s ease-in-out 1}
+#furao.dormindo .zzz{animation:zzz 2.6s ease-out}
+@keyframes dorme{0%,100%{transform:rotate(0)}50%{transform:rotate(4deg) translateY(4px)}}
+@keyframes zzz{0%{opacity:0;transform:translateY(14px)}30%,80%{opacity:1}100%{opacity:0;transform:translateY(-12px)}}
+
+#fala{position:absolute;left:51.2%;bottom:65%;translate:-50% 0;white-space:nowrap;font:italic 19px var(--texto);opacity:0;transition:opacity .4s;text-shadow:0 2px 8px #000;pointer-events:none}
+#fala.v{opacity:1}
+#prop{position:absolute;left:58.6%;bottom:33.2%;width:5.2%;opacity:0;pointer-events:none}
+#prop svg{display:block;width:100%}
+#prop.m{animation:cai 1.8s ease-out}
+@keyframes cai{0%{opacity:0;transform:translateY(-140px) scale(.7)}22%{opacity:1;transform:none}30%{transform:translateY(-22px)}38%{transform:none}85%{opacity:1}100%{opacity:0}}
+.vagalume{position:absolute;width:6px;height:6px;border-radius:50%;background:#d7f58a;box-shadow:0 0 10px 4px rgba(190,240,100,.4);pointer-events:none;opacity:.7;animation:flutua var(--d) ease-in-out infinite alternate}
+@keyframes flutua{to{transform:translate(var(--x),var(--y));opacity:.15}}
+
+/* Interface */
+#fio{position:fixed;z-index:6;top:0;left:0;height:3px;width:0;background:var(--seda);box-shadow:0 0 8px var(--seda);transition:width .8s}
+#hud{position:fixed;z-index:5;top:calc(env(safe-area-inset-top,0px) + 16px);left:max(16px,env(safe-area-inset-left,0px));width:min(260px,62vw);text-shadow:0 1px 6px #000}
+#hNome{display:block;font-size:21px;font-weight:700;letter-spacing:.12em}
+#hIdade{display:block;font-size:13px;letter-spacing:.14em;opacity:.8;margin:2px 0 10px}
+#hIdade.flash{animation:flash 1s}
+@keyframes flash{30%{color:var(--musgo);text-shadow:0 0 12px var(--musgo)}}
+.barra{display:grid;grid-template-columns:82px 1fr;align-items:center;gap:8px;margin:6px 0;font-size:12px;letter-spacing:.12em}
+.trilho{height:7px;border:1px solid rgba(232,230,212,.55);background:rgba(0,0,0,.55);padding:1px}
+.trilho b{display:block;height:100%;width:50%;background:var(--c);transition:width .5s}
+.barra[data-k=fome]{--c:#e0a83c}.barra[data-k=felicidade]{--c:var(--musgo)}.barra[data-k=cansaco]{--c:#8fb4cf}
+.barra.perigo{color:#ff9a8a}
+.barra.perigo b{animation:alerta .7s infinite alternate}
+@keyframes alerta{to{filter:brightness(1.7)}}
+
+#acoes{position:fixed;z-index:5;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);display:flex;justify-content:center;gap:clamp(12px,4vw,34px)}
+.acao{background:none;border:0;display:grid;justify-items:center;gap:9px;cursor:pointer;font-size:12px;letter-spacing:.12em;text-shadow:0 1px 6px #000}
+.acao i{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,#16210f,#070b08 70%);border:2px solid var(--osso);box-shadow:0 0 0 4px var(--tinta),0 0 0 5px rgba(232,230,212,.35),0 6px 18px #000;transition:transform .15s,box-shadow .2s}
+.acao svg{width:28px;height:28px;fill:none;stroke:var(--osso);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.acao:active i{transform:scale(.92)}
+.acao:hover i,.acao:focus-visible i{box-shadow:0 0 0 4px var(--tinta),0 0 0 5px var(--musgo),0 0 22px rgba(155,227,29,.35)}
+.acao:focus-visible{outline:0}
+body.ocupado .acao[data-a]:not([data-a=status]){opacity:.45;pointer-events:none}
+
+.tela{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:20px;background:rgba(3,6,4,.76);backdrop-filter:blur(3px)}
+.tela[hidden]{display:none}
+.caixa{width:min(360px,100%);padding:28px 24px;text-align:center;background:rgba(8,12,9,.95);border:1px solid rgba(232,230,212,.5);box-shadow:0 0 0 5px rgba(8,12,9,.95),0 0 0 6px rgba(232,230,212,.22),0 20px 60px #000}
+h1,h2{margin:0;font-weight:700;letter-spacing:.12em}
+h1{font-size:28px}h2{font-size:22px}
+.orn{height:1px;margin:16px 0;background:linear-gradient(90deg,transparent,var(--osso),transparent);position:relative}
+.orn::after{content:"";position:absolute;left:50%;top:-3px;width:7px;height:7px;background:var(--osso);rotate:45deg;translate:-50% 0}
+p{margin:0;font-family:var(--texto);font-style:italic;line-height:1.6;opacity:.92}
+input{width:100%;margin:14px 0 20px;padding:8px;text-align:center;background:none;border:0;border-bottom:1px solid var(--osso);outline:0;font-size:20px;letter-spacing:.1em;-webkit-user-select:text;user-select:text}
+input:focus{border-color:var(--musgo)}
+.botao{display:block;width:100%;margin:10px 0 0;padding:12px;background:none;border:1px solid rgba(232,230,212,.6);cursor:pointer;letter-spacing:.16em;font-size:15px}
+.botao:hover,.botao:active,.botao:focus-visible{background:rgba(232,230,212,.12);outline:0}
+dl{margin:0}dl div{display:flex;justify-content:space-between;padding:6px 0;font-size:15px;letter-spacing:.1em}dt,dd{margin:0}
+@media (prefers-reduced-motion:reduce){.vagalume,#furao svg,.olhos{animation:none}}
